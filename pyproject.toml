@@ -7,7 +7,7 @@ authors = ["giacomorebecchi"]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic = "^1.9.2"
-python-telegram-bot = "^13.13"
+python-telegram-bot = { version = "^20.0.0*", allow-prereleases = true}
 numpy = "^1.23.2"
 pandas = "^1.4.3"
 pyarrow = "^9.0.0"
