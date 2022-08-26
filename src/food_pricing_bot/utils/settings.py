@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         env_file = ".env"
 
     @validator("DATA_PATH")
-    def validate_path(cls, v: str) -> str:
+    def validate_path(cls, v: str) -> PurePosixPath:
         try:
             path = PurePosixPath(v)
         except Exception:
