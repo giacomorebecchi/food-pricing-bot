@@ -12,7 +12,7 @@ Two active Databases:
 
 from redis import Redis
 
-from food_pricing_bot.utils.settings import get_settings
+from .settings import get_settings
 
 REDIS_HOST = get_settings().REDIS_HOST
 REDIS_PORT = get_settings().REDIS_PORT
