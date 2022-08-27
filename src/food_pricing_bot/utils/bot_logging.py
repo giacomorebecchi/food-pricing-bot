@@ -6,8 +6,7 @@ def message(update: Update, message: str) -> str:
 
 
 def new_user(update: Update) -> str:
-    return (
-        "New player with CHAT_ID: %s, FULL_NAME: %s",
+    return "New player with CHAT_ID: %s, FULL_NAME: %s" % (
         update.message.chat_id,
         update.message.from_user.full_name,
     )
