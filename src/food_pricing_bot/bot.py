@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from telegram import __version__ as TG_VER
@@ -35,9 +36,11 @@ logger = logging.getLogger(__name__)
 TOKEN = get_settings().TOKEN
 
 Y_OR_N_REGEX = f"^({texts.P_ANSWER}|{texts.N_ANSWER})$"
-PRICE_REGEX = ""  # TODO: move in file
+PRICE_REGEX = r"\D*(\d+)\D*(\d{0,2})\D*"  # TODO: move in file
 
-READY, PLAY = range(2)
+INSTRUCTIONS, PLAY = range(2)
+
+SLEEP_SECONDS = 5
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -45,9 +48,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logging.info(bot_logging.new_user(update))
 
     reply_keyboard = [[texts.P_ANSWER, texts.N_ANSWER]]
+    for text in texts.WELCOME_TEXTS:
+        await update.message.reply_text(text, reply_markup=ReplyKeyboardRemove())
+        await asyncio.sleep(SLEEP_SECONDS)
 
     await update.message.reply_text(
-        texts.WELCOME_TEXT,
+        texts.START_TEXT,
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard,
             one_time_keyboard=True,
@@ -55,10 +61,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         ),
     )
 
-    return READY
+    return INSTRUCTIONS
 
 
-async def ready(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def instructions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Starts the game if the player is ready, else it says goodbye."""
     if update.message.text == texts.N_ANSWER:
         await update.message.reply_text(
@@ -66,7 +72,10 @@ async def ready(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
         return ConversationHandler.END
     elif update.message.text == texts.P_ANSWER:
-        await update.message.reply_text(texts.READY_TEXT)
+        for text in texts.READY_TEXTS:
+            await update.message.reply_text(text, reply_markup=ReplyKeyboardRemove())
+            await asyncio.sleep(SLEEP_SECONDS)
+        await update.message.reply_text(texts.INSTRUCTIONS_TEXT)
         return PLAY
     else:
         raise ValueError("Unrecognised answer.")
@@ -99,7 +108,7 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
-            READY: [MessageHandler(filters.Regex(Y_OR_N_REGEX), ready)],
+            INSTRUCTIONS: [MessageHandler(filters.Regex(Y_OR_N_REGEX), instructions)],
             PLAY: [
                 MessageHandler(filters.Regex(PRICE_REGEX), play),
                 CommandHandler("stop", stop_playing),
