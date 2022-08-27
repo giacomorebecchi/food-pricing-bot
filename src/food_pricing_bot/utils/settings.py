@@ -10,6 +10,8 @@ from pydantic import BaseSettings, validator
 class Settings(BaseSettings):
     TOKEN: str
     DATA_PATH: str
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
 
     class Config:
         env_file = ".env"
