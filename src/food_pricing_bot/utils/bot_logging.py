@@ -13,4 +13,8 @@ def new_user(update: Update) -> str:
 
 
 def cancelled_user(update: Update) -> str:
-    return ""  # TODO
+    return "User with CHAT_ID: %s used command /cancel" % update.message.chat_id
+
+
+def stopped_playing(update: Update) -> str:
+    return "User with CHAT_ID: %s used command /stop" % update.message.chat_id
