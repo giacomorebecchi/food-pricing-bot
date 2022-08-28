@@ -14,7 +14,7 @@ Three active Databases:
 """
 import json
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 from aioredis import Redis
 
@@ -75,3 +75,9 @@ async def set_new_answer(
         answers = json.loads(answers)
     answers[item_id] = answer
     await r_a.set(chat_id, json.dumps(answers))
+
+
+async def get_answers(chat_id: str) -> Dict:
+    r = await get_redis(1)
+    answers = await r.get(chat_id)
+    return json.loads(answers)
