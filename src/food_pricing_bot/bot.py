@@ -21,7 +21,7 @@ if __version_info__ < (20, 0, 0, "alpha", 1):
         f"This package is not compatible with your current PTB version {TG_VER}.\n"
         "Version 20.0.0 is required."
     )
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import InputMediaPhoto, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -32,7 +32,7 @@ from telegram.ext import (
 )
 
 from food_pricing_bot import texts
-from food_pricing_bot.utils import bot_logging, data
+from food_pricing_bot.utils import bot_logging, data, sampling
 from food_pricing_bot.utils.settings import get_settings
 
 # Enable logging
@@ -108,7 +108,7 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return ConversationHandler.END
     elif regex_dict["YoN"] is None:
         previous_item_id = await get_last_question(chat_id)
-        correct_price = await data.get_correct_price(previous_item_id)
+        correct_price = data.get_correct_price(previous_item_id)
         await update.message.reply_text(
             texts.correct_price_text(correct_price), reply_markup=ReplyKeyboardRemove()
         )
@@ -118,16 +118,17 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             answer=update.message.text,
         )
 
-    new_item_id = "test"  # sample_new_item(chat_id)
-    # img = get_img(new_item_id)
-    # txt = get_txt(new_item_id)
-    await update.message.reply_media_group()
+    new_item_id = sampling.sample_new_item(chat_id)
+    img = data.get_img(new_item_id)
+    txt = data.get_txt(new_item_id)
+    media = InputMediaPhoto(media=img, caption=txt)
+    await update.message.reply_media_group(media)
     await set_new_question(chat_id=chat_id, item_id=new_item_id)
     return PLAY
 
 
 async def stop_playing(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    logger.info(bot_logging.stopped_playing(update))  # TODO
+    logger.info(bot_logging.stopped_playing(update))
     await update.message.reply_text(texts.STOP_TEXT, reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
