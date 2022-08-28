@@ -31,9 +31,7 @@ from telegram.ext import (
     filters,
 )
 
-from food_pricing_bot import texts
-from food_pricing_bot.utils import bot_logging, data, sampling
-from food_pricing_bot.utils.settings import get_settings
+from food_pricing_bot.utils import bot_logging, data, sampling, settings, texts
 
 # Enable logging
 logging.basicConfig(
@@ -41,7 +39,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-TOKEN = get_settings().TOKEN
+TOKEN = settings.get_settings().TOKEN
 
 Y_OR_N_REGEX = f"^({texts.P_ANSWER}|{texts.N_ANSWER})$"
 PLAY_REGEX = (
@@ -95,6 +93,7 @@ async def instructions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Plays one round of the game."""
     chat_id = update.message.chat_id
     regex_dict = re.match(PLAY_REGEX, update.message.text).groupdict()
     if regex_dict["YoN"] == texts.P_ANSWER:
@@ -119,15 +118,16 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
 
     new_item_id = sampling.sample_new_item(chat_id)
-    img = data.get_img(new_item_id)
+    await set_new_question(chat_id=chat_id, item_id=new_item_id)
+    img = await data.get_img(new_item_id)
     txt = data.get_txt(new_item_id)
     media = InputMediaPhoto(media=img, caption=txt)
     await update.message.reply_media_group(media)
-    await set_new_question(chat_id=chat_id, item_id=new_item_id)
     return PLAY
 
 
 async def stop_playing(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Stops the game and ends the conversation."""
     logger.info(bot_logging.stopped_playing(update))
     await update.message.reply_text(texts.STOP_TEXT, reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
