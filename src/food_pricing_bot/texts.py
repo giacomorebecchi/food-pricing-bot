@@ -47,6 +47,18 @@ NOT_READY_TEXT = "\n\n".join(
     ]
 )
 
+START_PLAYING_TEXT = "Bene. Incominciamo con il primo turno!"
+
+NOT_UNDERSTOOD_INSTRUCTIONS_TEXT = "\n\n".join(
+    [
+        "Mi spiace che le istruzioni siano state poco chiare! Puoi contattarmi "
+        "all'indirizzo email grebecchi98@gmail.com, sarò felice di aiutarti. ",
+        "Altrimenti puoi ricominciare da capo, semplicemente scrivendo il comando "
+        "/start.",
+        "Giacomo",
+    ]
+)
+
 STOP_TEXT = "\n\n".join(
     [
         "Grazie per aver giocato con me, il tuo aiuto è stato prezioso!",
@@ -60,3 +72,7 @@ CANC_TEXT = "\n\n".join(
         "Giacomo",
     ]
 )
+
+
+def correct_price_text(correct_price: str) -> str:
+    return f"Il prezzo corretto era: {correct_price}"
