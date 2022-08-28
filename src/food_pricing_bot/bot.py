@@ -49,7 +49,7 @@ PLAY_REGEX = (
 
 INSTRUCTIONS, PLAY = range(2)
 
-SLEEP_SECONDS = 5
+SLEEP_SECONDS = 4
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
