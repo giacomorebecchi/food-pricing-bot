@@ -33,7 +33,7 @@ READY_TEXTS = [
     "Per favore, scrivi il prezzo in cifre, separato da un punto.",
     "Per esempio, quando ti invio un'immagine con il testo, dovrai rispondere ",
     "0.00",
-    "Dove al posto degli 0 dovrai mettere le cifre corrette."
+    "Dove al posto degli 0 dovrai mettere le cifre corrette.",
     "Ad ogni tua risposta, risponderò con il prezzo corretto del prodotto, "
     "seguito da un nuovo turno del gioco. Quando ti stufi di giocare, "
     "puoi semplicemente smettere di rispondermi, o scrivere il comando "
