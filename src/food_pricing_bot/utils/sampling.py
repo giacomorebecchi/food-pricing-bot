@@ -11,4 +11,4 @@ async def sample_new_item(chat_id: str) -> str:
     previous_items = set(answers.keys())
     all_items = set(DF.index)
     available_items = set.difference(all_items, previous_items)
-    return choice(available_items)
+    return choice(list(available_items))
