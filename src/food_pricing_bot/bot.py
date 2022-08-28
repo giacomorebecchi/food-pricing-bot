@@ -86,7 +86,15 @@ async def instructions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         for text in texts.READY_TEXTS:
             await update.message.reply_text(text, reply_markup=ReplyKeyboardRemove())
             await asyncio.sleep(SLEEP_SECONDS)
-        await update.message.reply_text(texts.INSTRUCTIONS_TEXT)
+        reply_keyboard = [[texts.P_ANSWER, texts.N_ANSWER]]
+        await update.message.reply_text(
+            texts.INSTRUCTIONS_TEXT,
+            reply_markup=ReplyKeyboardMarkup(
+                reply_keyboard,
+                one_time_keyboard=True,
+                input_field_placeholder="Pronto ad iniziare?",
+            ),
+        )
         return PLAY
     else:
         raise ValueError("Unrecognised answer.")
@@ -117,7 +125,7 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             answer=update.message.text,
         )
 
-    new_item_id = sampling.sample_new_item(chat_id)
+    new_item_id = await sampling.sample_new_item(chat_id)
     await set_new_question(chat_id=chat_id, item_id=new_item_id)
     img = await data.get_img(new_item_id)
     txt = data.get_txt(new_item_id)
