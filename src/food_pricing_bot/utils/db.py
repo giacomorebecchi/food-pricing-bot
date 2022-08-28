@@ -80,4 +80,7 @@ async def set_new_answer(
 async def get_answers(chat_id: str) -> Dict:
     r = await get_redis(1)
     answers = await r.get(chat_id)
-    return json.loads(answers)
+    if answers is None:
+        return {}
+    else:
+        return json.loads(answers)
