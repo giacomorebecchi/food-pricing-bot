@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import PurePosixPath
 from typing import Optional
 
@@ -26,6 +27,17 @@ def get_img_path(fname: Optional[str] = None) -> PurePosixPath:
         "img",
     )
     if fname:
+        path = path.joinpath(fname)
+    return path
+
+
+def get_dump_path(fname: Optional[str] = None) -> PurePosixPath:
+    path = BASE_PATH.joinpath(
+        "experiment",
+        "answers",
+    )
+    os.makedirs(path, exist_ok=True)
+    if fname is not None:
         path = path.joinpath(fname)
     return path
 
