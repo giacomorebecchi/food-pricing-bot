@@ -2,6 +2,7 @@ import logging
 from pathlib import PurePosixPath
 from typing import Optional
 
+import pandas as pd
 import pyarrow.parquet as pq
 
 from .settings import get_settings
@@ -36,3 +37,12 @@ def get_table(split: Optional[str] = None) -> pq.ParquetDataset:
     _filter = [("split", "=", split)] if split else None
     table = pq.read_table(path, filters=_filter)
     return table
+
+
+def get_df(split: Optional[str] = None) -> pd.DataFrame:
+    path = get_table_path()
+    if split is None:
+        logging.warning("Loading the full dataset (split argument set to None).")
+    _filter = [("split", "=", split)] if split else None
+    df = pd.read_parquet(path, filters=_filter)
+    return df

@@ -1,7 +1,15 @@
 import asyncio
 import logging
+import re
 
 from telegram import __version__ as TG_VER
+
+from food_pricing_bot.utils.db import (
+    get_last_question,
+    set_new_answer,
+    set_new_question,
+    set_new_user,
+)
 
 try:
     from telegram import __version_info__
@@ -24,7 +32,7 @@ from telegram.ext import (
 )
 
 from food_pricing_bot import texts
-from food_pricing_bot.utils import bot_logging
+from food_pricing_bot.utils import bot_logging, data
 from food_pricing_bot.utils.settings import get_settings
 
 # Enable logging
@@ -36,7 +44,10 @@ logger = logging.getLogger(__name__)
 TOKEN = get_settings().TOKEN
 
 Y_OR_N_REGEX = f"^({texts.P_ANSWER}|{texts.N_ANSWER})$"
-PRICE_REGEX = r"\D*(\d+)\D*(\d{0,2})\D*"  # TODO: move in file
+PLAY_REGEX = (
+    rf"^(?P<YoN>{texts.P_ANSWER}|{texts.N_ANSWER})|"  # first round
+    r"\D*\d+\D*\d{0,2}\D*$"  # price
+)
 
 INSTRUCTIONS, PLAY = range(2)
 
@@ -61,6 +72,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         ),
     )
 
+    await set_new_user(update=update)
+
     return INSTRUCTIONS
 
 
@@ -82,20 +95,47 @@ async def instructions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 
 async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    pass  # TODO
+    chat_id = update.message.chat_id
+    regex_dict = re.match(PLAY_REGEX, update.message.text).groupdict()
+    if regex_dict["YoN"] == texts.P_ANSWER:
+        await update.message.reply_text(
+            texts.START_PLAYING_TEXT, reply_markup=ReplyKeyboardRemove()
+        )
+    elif regex_dict["YoN"] == texts.N_ANSWER:
+        await update.message.reply_text(
+            texts.NOT_UNDERSTOOD_INSTRUCTIONS_TEXT, reply_markup=ReplyKeyboardRemove()
+        )
+        return ConversationHandler.END
+    elif regex_dict["YoN"] is None:
+        previous_item_id = await get_last_question(chat_id)
+        correct_price = await data.get_correct_price(previous_item_id)
+        await update.message.reply_text(
+            texts.correct_price_text(correct_price), reply_markup=ReplyKeyboardRemove()
+        )
+        await set_new_answer(
+            chat_id=chat_id,
+            item_id=previous_item_id,
+            answer=update.message.text,
+        )
+
+    new_item_id = "test"  # sample_new_item(chat_id)
+    # img = get_img(new_item_id)
+    # txt = get_txt(new_item_id)
+    await update.message.reply_media_group()
+    await set_new_question(chat_id=chat_id, item_id=new_item_id)
+    return PLAY
 
 
-async def stop_playing() -> int:
-    pass  # TODO
+async def stop_playing(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    logger.info(bot_logging.stopped_playing(update))  # TODO
+    await update.message.reply_text(texts.STOP_TEXT, reply_markup=ReplyKeyboardRemove())
+    return ConversationHandler.END
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancels and ends the conversation."""
     logger.info(bot_logging.cancelled_user(update))
-    await update.message.reply_text(
-        texts.CANCEL_TEXT, reply_markup=ReplyKeyboardRemove()
-    )
-
+    await update.message.reply_text(texts.CANC_TEXT, reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
 
@@ -110,7 +150,7 @@ def main() -> None:
         states={
             INSTRUCTIONS: [MessageHandler(filters.Regex(Y_OR_N_REGEX), instructions)],
             PLAY: [
-                MessageHandler(filters.Regex(PRICE_REGEX), play),
+                MessageHandler(filters.Regex(PLAY_REGEX), play),
                 CommandHandler("stop", stop_playing),
             ],
         },
