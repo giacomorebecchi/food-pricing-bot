@@ -24,7 +24,7 @@ START_TEXT = "Sei pronto a giocare con me?"
 
 READY_TEXTS = [
     "Ti spiego velocemente in cosa consiste il gioco.",
-    "Ti invierò un'immagine di un cibo, accompagnato dal suo titolo e una "
+    "Ti invierò un'immagine di un cibo, accompagnata dal suo titolo e una "
     "descrizione (non sempre presente). Il tuo obiettivo è indovinare il prezzo "
     "di quel prodotto.",
     "Per giocare, a ogni messaggio (immagine + testo) che ti invierò, dovrai "
