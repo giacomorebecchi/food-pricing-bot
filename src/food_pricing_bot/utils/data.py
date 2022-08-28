@@ -6,7 +6,7 @@ DF = get_df(split="test")
 
 
 def get_correct_price(item_id: str) -> int:
-    fractional_price = DF.loc[item_id, "fractional_price"]
+    fractional_price = DF.loc[item_id, "price_fractional"]
     return fractional_price
 
 
