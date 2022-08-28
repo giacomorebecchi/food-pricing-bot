@@ -48,8 +48,10 @@ NOT_READY_TEXT = "\n\n".join(
 )
 
 STOP_TEXT = "\n\n".join(
-    "Grazie per aver giocato con me, il tuo aiuto è stato prezioso!",
-    "Giacomo",
+    [
+        "Grazie per aver giocato con me, il tuo aiuto è stato prezioso!",
+        "Giacomo",
+    ]
 )
 
 CANC_TEXT = "\n\n".join(
