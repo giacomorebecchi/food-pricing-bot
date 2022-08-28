@@ -5,5 +5,10 @@ services:
     image: redis:latest
     ports:
       - 6379:6379
+    command: redis-server --save 20 1 --loglevel warning
     volumes:
       - ./storage/redis/data:/data
+
+volumes:
+  redis:
+    driver: local
