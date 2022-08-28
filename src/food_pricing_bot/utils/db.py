@@ -56,7 +56,7 @@ async def set_new_question(chat_id: str, item_id: str) -> None:
 
 async def get_last_question(chat_id: str) -> str:
     r = await get_redis(0)
-    item_id = await r.get(chat_id)
+    item_id: bytes = await r.get(chat_id)
     return item_id.decode()
 
 
@@ -67,7 +67,8 @@ async def set_new_answer(
 ) -> None:
     r_q = await get_redis(0)
     r_a = await get_redis(1)
-    item_id = await r_q.get(chat_id)
+    item_id: bytes = await r_q.get(chat_id)
+    item_id = item_id.decode()
     answers = await r_a.get(chat_id)
     if answers is None:
         answers = {}
