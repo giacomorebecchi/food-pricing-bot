@@ -74,5 +74,10 @@ CANC_TEXT = "\n\n".join(
 )
 
 
-def correct_price_text(correct_price: str) -> str:
+def format_fractional_price(p: int) -> str:
+    return f"€{p // 100}.{p % 100}"
+
+
+def correct_price_text(correct_price: int) -> str:
+    correct_price = format_fractional_price(correct_price)
     return f"Il prezzo corretto era: {correct_price}"
