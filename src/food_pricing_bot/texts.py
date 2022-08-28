@@ -31,8 +31,8 @@ READY_TEXTS = [
     "rispondere con il prezzo in cifre che pensi sia adeguato per il prodotto "
     "mostrato.",
     "Ad ogni tua risposta, risponderò con il prezzo corretto del prodotto, "
-    "seguito da un nuovo turno del gioco. Se, in qualsiasi momento, ti stufi di "
-    "giocare, puoi semplicemente smettere di rispondermi, o scrivere il comando "
+    "seguito da un nuovo turno del gioco. Quando ti stufi di giocare, "
+    "puoi semplicemente smettere di rispondermi, o scrivere il comando "
     "speciale /stop.",
 ]
 
@@ -47,7 +47,12 @@ NOT_READY_TEXT = "\n\n".join(
     ]
 )
 
-CANCEL_TEXT = "\n\n".join(
+STOP_TEXT = "\n\n".join(
+    "Grazie per aver giocato con me, il tuo aiuto è stato prezioso!",
+    "Giacomo",
+)
+
+CANC_TEXT = "\n\n".join(
     [
         "Grazie per il tuo tempo!",
         "Giacomo",
