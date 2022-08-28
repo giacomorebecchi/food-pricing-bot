@@ -24,6 +24,7 @@ def dump_answers() -> None:
             data = r.get(key)
             line = json.dumps({"chat_id": key.decode(), "data": json.loads(data)})
             f.write(line)
+            f.write("\n")
 
 
 def delete_answers() -> None:
