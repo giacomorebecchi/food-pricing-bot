@@ -21,7 +21,7 @@ if __version_info__ < (20, 0, 0, "alpha", 1):
         f"This package is not compatible with your current PTB version {TG_VER}.\n"
         "Version 20.0.0 is required."
     )
-from telegram import InputMediaPhoto, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -127,10 +127,9 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     new_item_id = await sampling.sample_new_item(chat_id)
     await set_new_question(chat_id=chat_id, item_id=new_item_id)
-    img = await data.get_img(new_item_id)
+    img = data.get_img(new_item_id)
     txt = data.get_txt(new_item_id)
-    media = InputMediaPhoto(media=img, caption=txt)
-    await update.message.reply_media_group(media)
+    await update.message.reply_photo(img, caption=txt)
     return PLAY
 
 
