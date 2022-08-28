@@ -10,8 +10,9 @@ Three active Databases:
         - rationale = store answer for every item, for every chat
     - db = 2:
         - key = chat_id
-        - value = full_name, datetime  # tuple
+        - value = {"full_name": full_name, "datetime": [datetime]}  # dict
 """
+import json
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
@@ -36,8 +37,16 @@ async def set_new_user(update: "Update") -> None:
     dt = datetime.now(timezone.utc).isoformat()
     chat_id = update.message.chat_id
     full_name = update.message.from_user.full_name
-    data = full_name, dt
-    await r.set(chat_id, data)
+    data = await r.get(chat_id)
+    if data is None:
+        data = {
+            "full_name": full_name,
+            "datetime": [dt],
+        }
+    else:
+        data = json.loads(data)
+        data["datetime"].append(dt)
+    await r.set(chat_id, json.dumps(data))
 
 
 async def set_new_question(chat_id: str, item_id: str) -> None:
@@ -50,5 +59,9 @@ async def set_new_answer(chat_id: str, item_id: str, answer: str) -> None:
     r_a = await get_redis(1)
     item_id = await r_q.get(chat_id)
     answers = await r_a.get(chat_id)
+    if answers is None:
+        answers = {}
+    else:
+        answers = json.loads(answers)
     answers[item_id] = answer
-    await r_a.set(chat_id, answers)
+    await r_a.set(chat_id, json.dumps(answers))
