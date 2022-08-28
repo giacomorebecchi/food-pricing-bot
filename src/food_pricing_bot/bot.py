@@ -129,6 +129,7 @@ async def play(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await set_new_question(chat_id=chat_id, item_id=new_item_id)
     img = data.get_img(new_item_id)
     txt = data.get_txt(new_item_id)
+    await asyncio.sleep(SLEEP_SECONDS)
     await update.message.reply_photo(img, caption=txt)
     return PLAY
 
