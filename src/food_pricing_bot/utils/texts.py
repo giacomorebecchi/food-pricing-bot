@@ -79,7 +79,7 @@ CANC_TEXT = "\n\n".join(
 
 
 def format_fractional_price(p: int) -> str:
-    return f"€{int(p // 100)}.{int(p % 100)}"
+    return "€ %.2f" % (p / 100)
 
 
 def correct_price_text(correct_price: int) -> str:
