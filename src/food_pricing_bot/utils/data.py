@@ -11,7 +11,8 @@ def get_correct_price(item_id: str) -> int:
 
 
 async def get_img(item_id: str) -> InputFile:
-    img_bytes = await open(get_img_path(item_id), mode="rb").read()
+    fname = f"{item_id}.jpg"
+    img_bytes = await open(get_img_path(fname), mode="rb").read()
     return InputFile(img_bytes)
 
 

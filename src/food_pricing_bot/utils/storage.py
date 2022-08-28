@@ -26,7 +26,7 @@ def get_img_path(fname: Optional[str] = None) -> PurePosixPath:
         "img",
     )
     if fname:
-        path.joinpath(fname)
+        path = path.joinpath(fname)
     return path
 
 
