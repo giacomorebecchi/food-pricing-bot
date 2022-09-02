@@ -44,7 +44,7 @@ TOKEN = settings.get_settings().TOKEN
 Y_OR_N_REGEX = f"^({texts.P_ANSWER}|{texts.N_ANSWER})$"
 PLAY_REGEX = (
     rf"^(?P<YoN>{texts.P_ANSWER}|{texts.N_ANSWER})|"  # first round
-    r"\D*\d+\D*\d{0,2}\D*$"  # price
+    r"\D*(?P<int>\d+)\D*(?P<dec>\d{0,2})\D*$"  # price
 )
 
 INSTRUCTIONS, PLAY = range(2)
